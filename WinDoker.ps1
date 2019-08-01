@@ -5,10 +5,11 @@
 Clear-Host
 Set-Location $PSScriptRoot
 
-#.gitignore
-"Docker.exe"|Out-File -FilePath .\.gitignore -Encoding utf8 -Force
-
 function DockerInstall {
+
+#.gitignore
+(Select-String -Path .\.gitignore -Pattern "Docker.exe" -NotMatch).Line|Out-File -FilePath .\.gitignore -Encoding utf8 -Force
+"Docker.exe"|Out-File -FilePath .\.gitignore -Encoding utf8 -Force -Append
 
     IF (!(Get-Service|Where-Object {$_.Name -match "docker"})){
 
