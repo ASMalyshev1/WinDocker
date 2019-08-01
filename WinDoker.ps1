@@ -9,30 +9,29 @@ Set-Location $PSScriptRoot
 "Docker.exe"|Out-File -FilePath .\.gitignore -Encoding utf8 -Force
 
 function DockerInstall {
-Param(
-[ValidateSet("CheckAndInstall","Install")][string]$Mode = "CheckAndInstall"
-)
-    IF ($Mode -eq "Install"){
-    Invoke-WebRequest -Uri https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe -OutFile .\Docker.exe
-    Start-Process .\Docker.exe -Wait
-    docker --version
+
+    IF (!(Get-Service|Where-Object {$_.Name -match "docker"})){
+
+        Invoke-WebRequest -Uri https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe -OutFile .\Docker.exe
+        Start-Process .\Docker.exe -Wait
+        docker --version
+
     } ELSE {
-        IF (!(Get-Service|Where-Object {$_.Name -match "docker"})){
-            Invoke-WebRequest -Uri https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe -OutFile .\Docker.exe
-            Start-Process .\Docker.exe -Wait
-            docker --version
-        } ELSE {
-            "Docker already installed"
-        }
+
+        "Docker already installed"
+
     }
 
-#Remove .\Docker.exe
-IF (Test-Path -Path .\Docker.exe){Remove-Item -Path .\Docker.exe -Force}
+    #Remove .\Docker.exe
+    IF (Test-Path -Path .\Docker.exe){
+        
+        Remove-Item -Path .\Docker.exe -Force
+
+    }
 }
+DockerInstall
 
-DockerInstall -Mode CheckAndInstall
-
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/microsoft/iis-docker/master/windowsservercore-1903/Dockerfile -Method Get -OutFile .\Dockerfile
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/microsoft/iis-docker/master/windowsservercore-1903/Dockerfile -Method Get -OutFile .\Dockerfile -
 
 # Docker
 docker build -t iis-site .
