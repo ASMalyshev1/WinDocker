@@ -32,9 +32,13 @@ function DockerInstall {
 }
 DockerInstall
 
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/microsoft/iis-docker/master/windowsservercore-1903/Dockerfile -Method Get -OutFile .\Dockerfile -
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/microsoft/iis-docker/master/windowsservercore-1903/Dockerfile -Method Get -OutFile .\Dockerfile
 
 # Docker
 docker build -t iis-site .
+docker ps
+docker images
+#docker stop 99eab0a9f7ea
+#docker rm 99eab0a9f7ea
 docker run -d -p 8000:80 --name my-running-site iis-site
 docker inspect -f "{{ .NetworkSettings.Networks.nat.IPAddress }}" my-running-site
